@@ -1,2 +1,5 @@
+import colorama
+from colorama import Fore, Style
+colorama.init(autoreset=True)
 def main() -> None:
-    print("Hello from enigma!")
+    print(Style.BRIGHT + Fore.GREEN + "Hello from enigma!")
