@@ -1,0 +1,1 @@
+# This stores historical rotor wiring and reflector wiring as constants.
