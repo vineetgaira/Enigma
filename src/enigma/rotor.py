@@ -1,3 +1,14 @@
-from enigma import ROTOR_I
+class RotorI:
 
-print(ROTOR_I)
+    def __init__(self): 
+        pass
+
+class RotorII:
+
+    def __init__(self):
+        pass
+
+class RotorIII:
+
+    def __init__(self):
+        pass
