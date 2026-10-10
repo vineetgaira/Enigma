@@ -53,9 +53,7 @@ class Rotor:
         """Build a historical rotor by name, e.g. Rotor.from_name("III")."""
         wiring_str, notch = wiring.ROTORS[name]
         return cls(wiring_str, notch, position=position, ring=ring)
-
-    # --- letter mapping -----------------------------------------------
-
+    
     def forward(self, index: int) -> int:
         """Signal entering from the right (keyboard/plugboard side)."""
         shift = self.position - self.ring
@@ -67,15 +65,12 @@ class Rotor:
         shifted_letter = _index_to_letter(index + shift)
         return (self.wiring.index(shifted_letter) - shift) % 26
 
-    # --- stepping -------------------------------------------------------
 
     def at_notch(self) -> bool:
         return _index_to_letter(self.position) == self.notch
 
     def step(self) -> None:
         self.position = (self.position + 1) % 26
-
-    # --- convenience ------------------------------------------------
 
     @property
     def position_letter(self) -> str:
