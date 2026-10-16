@@ -3,7 +3,7 @@
 import typer
 
 app = typer.Typer(
-    name = "Enigma",
+    name = "Enigmac",
     help = "A python replica of German Enigma machine.",
     no_args_is_help = True,
 )
