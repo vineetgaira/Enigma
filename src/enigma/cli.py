@@ -10,7 +10,7 @@ app = typer.Typer(
 
 
 @app.command
-def encrypt():
+def encrypt() -> None:
     """Encrypt a message using this command."""
 
     print("Encryption is not yet implemented.")
