@@ -18,4 +18,4 @@ def encrypt():
 def decrypt():
     """Decrypt a message using this command."""
 
-    typer.echo("Decryption is not yet implemented.")
+    typer.echo("cryption is not yet implemented.")
