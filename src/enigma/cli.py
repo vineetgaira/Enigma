@@ -3,14 +3,19 @@
 import typer
 
 app = typer.Typer(
-    name = "Enigmac",
+    name = "Enigma",
     help = "A python replica of German Enigma machine.",
     no_args_is_help = True,
 )
 
-
-@app.command
-def encrypt() -> None:
+@app.command()
+def encrypt():
     """Encrypt a message using this command."""
 
-    print("Encryption is not yet implemented.")
+    typer.echo("Encryption is not yet implemented.")
+
+@app.command()
+def decrypt():
+    """Decrypt a message using this command."""
+
+    typer.echo("Decryption is not yet implemented.")
