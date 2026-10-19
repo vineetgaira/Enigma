@@ -15,6 +15,7 @@ dependencies = [
 
 [project.scripts]
 enigma = "enigma.cli:app"
+enigma-gui = "enigma.gui:main"
 
 [build-system]
 requires = ["uv_build>=0.12.19,<0.13.0"]

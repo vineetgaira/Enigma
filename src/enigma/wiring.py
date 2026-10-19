@@ -36,12 +36,4 @@ ROTORS = {
 REFLECTORS = {
     "B": REFLECTOR_B,
     "C": REFLECTOR_C,
-}# This stores historical rotor wiring and reflector wiring as constants.
-
-ROTOR_I   = "EKMFLGDQVZNTOWYHXUSPAIBRCJ"
-ROTOR_II  = "AJDKSIRUXBLHWTMCQGZNPYFVOE"
-ROTOR_III = "BDFHJLCPRTXVZNYEIWGAKMUSQO"
-NOTCH_I, NOTCH_II, NOTCH_III = "Q", "E", "V"
-REFLECTOR_B = "YRUHQSLDPXNGOKMIEBFZCWVJAT"
-
-#This code is written by claude so I don't like it
+}
