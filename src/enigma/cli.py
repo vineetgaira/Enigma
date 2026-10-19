@@ -14,7 +14,13 @@ app = typer.Typer(
 @app.command()
 def gui() -> None:
     """Open the desktop Enigma console."""
-    from .gui import main
+    try:
+        from .gui import main
+    except ImportError as exc:
+        raise typer.BadParameter(
+            "The desktop GUI requires Tkinter. Install your Python distribution's Tk package, "
+            "then run `enigma gui` again."
+        ) from exc
 
     main()
 

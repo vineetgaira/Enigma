@@ -8,7 +8,6 @@ from tkinter import messagebox, ttk
 from .machine import EnigmaMachine
 from .rotor import ALPHABET
 
-
 INK = "#e8d9b5"
 MUTED = "#9c947e"
 PANEL = "#252923"
@@ -97,7 +96,7 @@ class EnigmaConsole(tk.Tk):
     @staticmethod
     def _normalize_letter(var: tk.StringVar) -> None:
         value = var.get().upper()
-        value = next((letter for letter in value if letter in ALPHABET), "A")
+        value = next((letter for letter in value if letter in ALPHABET), "")
         if var.get() != value:
             var.set(value)
 
@@ -127,7 +126,6 @@ class EnigmaConsole(tk.Tk):
         self.input_text = tk.Text(body, height=4, wrap="word", bg="#d4c9ad", fg="#171b18", insertbackground="#171b18",
                                   relief="flat", padx=10, pady=8, font=("TkFixedFont", 11))
         self.input_text.pack(fill="x", pady=(0, 7))
-        self.input_text.insert("1.0", "TYPE OR PASTE YOUR MESSAGE HERE")
         self.output_text = tk.Text(body, height=4, wrap="word", bg="#171b18", fg=GREEN, relief="flat", padx=10, pady=8,
                                    font=("TkFixedFont", 11), state="disabled")
         self.output_text.pack(fill="both", expand=True)
@@ -153,7 +151,7 @@ class EnigmaConsole(tk.Tk):
             "Window letters set the starting position. Ring letters offset the wiring. Choose three distinct rotors (I–V)."
         )
         tk.Label(frame, text=copy, justify="left", anchor="w", bg=PANEL, fg=INK,
-                 font=("TkDefaultFont", 9), padx=14, pady=(0, 13)).pack(fill="x")
+                 font=("TkDefaultFont", 9), padx=14).pack(fill="x", pady=(0, 13))
 
     def _machine(self) -> EnigmaMachine:
         return EnigmaMachine(
