@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import tkinter as tk
+import webbrowser
 from tkinter import messagebox, ttk
 
 from .machine import EnigmaMachine
@@ -313,6 +314,44 @@ class EnigmaConsole(tk.Tk):
         outer, content = self._panel(self.body, "02  /  MESSAGE TRAFFIC", "Encrypt · decrypt · inspect")
         outer.pack(fill="both", expand=True, padx=36, pady=(0, 14))
 
+        modebar = tk.Frame(content, bg=CHASSIS)
+        modebar.pack(fill="x", pady=(0, 10))
+        tk.Label(modebar, text="OPERATION", bg=CHASSIS, fg=MUTED, font=(FONT_MONO, 8, "bold")).pack(side="left")
+        self.mode_var = tk.StringVar(value="ENCRYPT")
+        modes = tk.Frame(modebar, bg=PANEL_DARK, padx=3, pady=3)
+        modes.pack(side="left", padx=11)
+        self.mode_buttons: dict[str, tk.Radiobutton] = {}
+        for mode in ("ENCRYPT", "DECRYPT"):
+            button = tk.Radiobutton(
+                modes,
+                text=mode,
+                value=mode,
+                variable=self.mode_var,
+                command=self._mode_changed,
+                indicatoron=False,
+                bg=PANEL_DARK,
+                fg=MUTED,
+                selectcolor=BRASS_DARK,
+                activebackground=PANEL,
+                activeforeground=IVORY,
+                relief="flat",
+                bd=0,
+                padx=13,
+                pady=6,
+                cursor="hand2",
+                font=(FONT_MONO, 8, "bold"),
+            )
+            button.pack(side="left")
+            self.mode_buttons[mode] = button
+        self.operation_hint = tk.Label(
+            modebar,
+            text="Same machine transform · decryption needs the original starting windows",
+            bg=CHASSIS,
+            fg=MUTED,
+            font=(FONT_SANS, 8),
+        )
+        self.operation_hint.pack(side="left", padx=(2, 0))
+
         text_columns = tk.Frame(content, bg=CHASSIS)
         text_columns.pack(fill="both", expand=True)
         for index in range(2):
@@ -327,7 +366,8 @@ class EnigmaConsole(tk.Tk):
 
         actions = tk.Frame(content, bg=CHASSIS)
         actions.pack(fill="x", pady=(11, 0))
-        self._button(actions, "RUN MACHINE", self.process_message, primary=True).pack(side="left")
+        self.run_button = self._button(actions, "ENCRYPT MESSAGE", self.process_message, primary=True)
+        self.run_button.pack(side="left")
         self._button(actions, "COPY OUTPUT", self.copy_output).pack(side="left", padx=(8, 0))
         self._button(actions, "LOAD OUTPUT AS INPUT", self.load_output).pack(side="left", padx=(8, 0))
         self._button(actions, "CLEAR", self.clear_messages).pack(side="left", padx=(8, 0))
@@ -341,6 +381,11 @@ class EnigmaConsole(tk.Tk):
             anchor="w",
         )
         self.status.pack(fill="x", pady=(10, 0))
+
+    def _mode_changed(self) -> None:
+        mode = self.mode_var.get()
+        self.run_button.configure(text=f"{mode} MESSAGE")
+        self.status.configure(text=f"{mode} MODE  ·  USE THE SAME SETTINGS AND START WINDOWS", fg=MUTED)
 
     def _message_box(
         self, parent: tk.Widget, caption: str, background: str, foreground: str, disabled: bool = False
@@ -499,6 +544,49 @@ class EnigmaConsole(tk.Tk):
             anchor="w", padx=11, pady=(5, 8)
         )
 
+        reading = tk.Frame(content, bg=CHASSIS)
+        reading.pack(fill="x", pady=(14, 0))
+        tk.Label(
+            reading,
+            text="FURTHER READING  /  OPEN IN BROWSER",
+            bg=CHASSIS,
+            fg=BRASS,
+            font=(FONT_MONO, 8, "bold"),
+        ).pack(anchor="w", pady=(0, 7))
+        links = (
+            ("Wikipedia · Enigma machine", "https://en.wikipedia.org/wiki/Enigma_machine"),
+            ("The National Museum of Computing · machine details", "https://www.tnmoc.org/bh-2-the-enigma-machine"),
+            ("Codes and Ciphers · technical guide", "https://www.codesandciphers.org.uk/enigma/"),
+            ("U.S. National Archives · Turing and Enigma (PDF)", "https://www.archives.gov/files/publications/prologue/1997/fall/turing.pdf"),
+        )
+        link_row = tk.Frame(reading, bg=CHASSIS)
+        link_row.pack(fill="x")
+        for index, (label, url) in enumerate(links):
+            link = tk.Label(
+                link_row,
+                text=f"↗  {label}",
+                bg=CHASSIS,
+                fg="#d6ba83",
+                cursor="hand2",
+                font=(FONT_SANS, 8, "underline"),
+            )
+            link.grid(row=index // 2, column=index % 2, sticky="w", padx=(0, 24), pady=3)
+            link.bind("<Button-1>", lambda _event, target=url: self._open_reference(target))
+        link_row.columnconfigure(0, weight=1)
+        link_row.columnconfigure(1, weight=1)
+
+    def _open_reference(self, url: str) -> None:
+        try:
+            opened = webbrowser.open_new_tab(url)
+        except webbrowser.Error:
+            opened = False
+        if opened:
+            self.status.configure(text="REFERENCE OPENED IN BROWSER", fg=GREEN)
+            return
+        self.clipboard_clear()
+        self.clipboard_append(url)
+        self.status.configure(text="NO BROWSER FOUND  ·  LINK COPIED TO CLIPBOARD", fg=MUTED)
+
     def _machine(self) -> EnigmaMachine:
         return EnigmaMachine(
             rotors=tuple(var.get() for var in self.rotor_vars),
@@ -526,7 +614,8 @@ class EnigmaConsole(tk.Tk):
         final_letter = next((c for c in reversed(result) if c in ALPHABET), "")
         self._light(final_letter)
         count = sum(c.isascii() and c.upper() in ALPHABET for c in message)
-        self.status.configure(text=f"COMPLETE  ·  {count} LETTERS STEPPED", fg=GREEN)
+        operation = "ENCRYPTED" if self.mode_var.get() == "ENCRYPT" else "DECRYPTED"
+        self.status.configure(text=f"{operation}  ·  {count} LETTERS STEPPED", fg=GREEN)
 
     def press_key(self, letter: str) -> None:
         try:
@@ -541,7 +630,7 @@ class EnigmaConsole(tk.Tk):
         self._append_output(result)
         self._show_positions(self.live_machine.positions)
         self._light(result)
-        self.status.configure(text=f"KEY {letter}  →  LAMP {result}  ·  LIVE KEY MODE", fg=GREEN)
+        self.status.configure(text=f"KEY {letter}  →  LAMP {result}  ·  LIVE {self.mode_var.get()} MODE", fg=GREEN)
 
     def _set_output(self, text: str) -> None:
         self.output_text.configure(state="normal")
@@ -575,7 +664,12 @@ class EnigmaConsole(tk.Tk):
         self.input_text.delete("1.0", "end")
         self.input_text.insert("1.0", output)
         self._invalidate_live_machine()
-        self.status.configure(text="OUTPUT LOADED AS INPUT  ·  RESET WINDOWS TO REUSE THE ORIGINAL KEY", fg=MUTED)
+        self._show_positions("".join(self.start_positions))
+        self._light("")
+        self.status.configure(
+            text="OUTPUT LOADED  ·  START WINDOWS RESTORED  ·  SELECT DECRYPT TO REVERSE",
+            fg=MUTED,
+        )
 
     def reset_windows(self) -> None:
         self.live_machine = None
