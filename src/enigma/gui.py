@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 import tkinter as tk
 import webbrowser
 from tkinter import messagebox, ttk
@@ -266,7 +267,13 @@ class EnigmaConsole(tk.Tk):
         )
         return card
 
-    def _letter_dial(self, parent: tk.Widget, label: str, variable: tk.StringVar, on_select) -> tk.Frame:
+    def _letter_dial(
+        self,
+        parent: tk.Widget,
+        label: str,
+        variable: tk.StringVar,
+        on_select: Callable[[], None],
+    ) -> tk.Frame:
         group = tk.Frame(parent, bg=PANEL)
         tk.Label(group, text=label, bg=PANEL, fg=MUTED, font=(FONT_MONO, 7)).pack(anchor="w")
         combo = ttk.Combobox(
@@ -439,7 +446,13 @@ class EnigmaConsole(tk.Tk):
         widget.yview_scroll(direction * 3, "units")
         return "break"
 
-    def _button(self, parent: tk.Widget, label: str, command, primary: bool = False) -> tk.Button:
+    def _button(
+        self,
+        parent: tk.Widget,
+        label: str,
+        command: Callable[[], None],
+        primary: bool = False,
+    ) -> tk.Button:
         bg = BRASS if primary else PANEL
         fg = "#20221e" if primary else IVORY
         return tk.Button(

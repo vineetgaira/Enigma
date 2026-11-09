@@ -20,7 +20,9 @@ class Rotor:
         self.wiring, self.notch = ROTORS[name]
         self.position = self._letter_index(position, "position")
         self.ring_setting = self._letter_index(ring_setting, "ring setting")
-        self._inverse_wiring = [self.wiring.index(letter) for letter in ALPHABET]
+        self._inverse_wiring = [0] * len(ALPHABET)
+        for input_index, output_letter in enumerate(self.wiring):
+            self._inverse_wiring[ord(output_letter) - ord("A")] = input_index
 
     @staticmethod
     def _letter_index(letter: str, label: str) -> int:
@@ -37,7 +39,7 @@ class Rotor:
 
     def encode_forward(self, value: int) -> int:
         shifted = (value + self.position - self.ring_setting) % 26
-        wired = ALPHABET.index(self.wiring[shifted])
+        wired = ord(self.wiring[shifted]) - ord("A")
         return (wired - self.position + self.ring_setting) % 26
 
     def encode_reverse(self, value: int) -> int:
