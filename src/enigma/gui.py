@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
 import tkinter as tk
 import webbrowser
+from collections.abc import Callable
 from tkinter import messagebox, ttk
 
 from .machine import EnigmaMachine
