@@ -7,6 +7,8 @@ class Plugboard:
     def __init__(self, pairs: str | list[str] | tuple[str, ...] = ()) -> None:
         if isinstance(pairs, str):
             pairs = pairs.split()
+        if len(pairs) > 13:
+            raise ValueError("The plugboard supports at most 13 pairs")
         mapping = {chr(code): chr(code) for code in range(ord("A"), ord("Z") + 1)}
         used: set[str] = set()
         for pair in pairs:

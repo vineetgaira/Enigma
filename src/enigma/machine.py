@@ -24,6 +24,8 @@ class EnigmaMachine:
     ) -> None:
         if isinstance(rotors, str):
             rotors = tuple(rotors.upper().replace(",", " ").split())
+        else:
+            rotors = tuple(name.upper() for name in rotors)
         if len(rotors) != 3:
             raise ValueError("Exactly three rotors must be specified from left to right")
         if len(set(rotors)) != 3:
